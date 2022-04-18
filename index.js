@@ -9,19 +9,42 @@ function Person(height, weight) {
     this.weight = weight;
 }
 
-function Dietician(height, weight) {
+function Dietician(height, weight, crn) {
+    Person.call(this, height, weight);
+    this.crn = crn;
     this.calculateImc = function() {
         return this.weight / Math.pow(this.height, 2);
     }
-    Person.call(this, height, weight);
+    console.log(this);
 }
-
 Dietician.prototype = Object.create(Person.prototype);
 Dietician.prototype.constructor = Dietician;
 
-function calculateImc() {
-    var height = parseFloat(document.querySelector('#altura').value);
-    var weight = parseFloat(document.querySelector('#peso').value);
-    document.querySelector('#imc').innerHTML = new Dietician(height, weight).calculateImc();
+function Athlete(height, weight, crn) {
+    Dietician.call(this, height, weight, crn);
+    this.calculateDiet = function() {
+        var imc = this.calculateImc();
+        if (imc > 30) {
+            return "Ultra leve";
+        } else {
+            return "Normal";
+        }
+    }
+}
+Athlete.prototype = Object.create(Dietician);
+Athlete.prototype.constructor = Athlete;
 
+
+function calculateImc(alturaEl, pesoEl) {
+    var height = parseFloat(alturaEl.value);
+    var weight = parseFloat(pesoEl.value);
+    document.querySelector('#imc').innerHTML = new Dietician(height, weight, 1234).calculateImc();
+    document.querySelector('#diet').innerHTML = new Athlete(height, weight, 1234).calculateDiet();
+}
+
+window.onload = function(evt) {
+    var btn = document.querySelector(".form button");
+    var alturaEl = document.querySelector('#altura');
+    var pesoEl = document.querySelector('#peso');
+    btn.addEventListener("click", function() { calculateImc(alturaEl, pesoEl) });
 }
